@@ -1,0 +1,32 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Register – FlixTogether{% endblock %}
+
+{% block content %}
+<div class="container mx-auto p-6 max-w-md text-white">
+    <h2 class="text-2xl font-bold mb-6">📝 Register</h2>
+
+    <form method="post" class="space-y-4">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+
+        <input type="text" name="username" placeholder="Username"
+               class="w-full p-2 rounded text-black" required>
+        <input type="password" name="password1" placeholder="Password"
+               class="w-full p-2 rounded text-black" required>
+        <input type="password" name="password2" placeholder="Confirm Password"
+               class="w-full p-2 rounded text-black" required>
+
+        <button type="submit"
+                class="w-full bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-xl">
+            ✅ Register
+        </button>
+    </form>
+
+    <p class="mt-4 text-sm text-gray-300">
+        Already have an account?
+        <a href="{% url 'core:login' %}" class="underline text-blue-400">Login</a>
+    </p>
+</div>
+{% endblock %}

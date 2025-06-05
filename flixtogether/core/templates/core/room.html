@@ -1,0 +1,107 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block content %}
+<h2>Room: {{ room.slug }}</h2>
+
+
+
+<div id="video-container">
+    <video id="video-player" width="640" controls crossorigin="anonymous"></video>
+    <iframe id="youtube-player" width="640" height="360" style="display:none;" frameborder="0" allowfullscreen></iframe>
+</div>
+
+<div>
+    <label for="video-upload">Upload Video (mp4, webm):</label>
+    <input type="file" id="video-upload" accept=".mp4,.webm">
+</div>
+
+<div>
+    <label for="youtube-link">Or paste YouTube URL:</label>
+    <input type="text" id="youtube-link" placeholder="https://www.youtube.com/watch?v=..." style="width:300px;">
+    <button id="load-youtube">Load YouTube Video</button>
+</div>
+
+<div id="chat-container" style="margin-top: 20px;">
+    <h3>Live Chat</h3>
+    <div id="chat-messages" style="border:1px solid #ccc; height: 200px; overflow-y: scroll; padding: 10px;"></div>
+    <input type="text" id="chat-input" placeholder="Type your message..." style="width:80%;">
+    <button id="chat-send">Send</button>
+</div>
+
+<audio id="remoteAudio" autoplay></audio>
+
+<button id="voice-call-btn">Start Voice Call</button>
+
+<script>
+const roomSlug = "{{ room.slug }}";
+const userName = "{{ user.username }}";
+const chatSocket = new WebSocket('ws://' + window.location.host + '/ws/room/' + roomSlug + '/');
+
+// Chat message handlers
+chatSocket.onmessage = function(e) {
+    const data = JSON.parse(e.data);
+    if (data.message) {
+        const chatMessages = document.getElementById('chat-messages');
+        const msgDiv = document.createElement('div');
+        msgDiv.textContent = `[${new Date(data.timestamp).toLocaleTimeString()}] ${data.username}: ${data.message}`;
+        chatMessages.appendChild(msgDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+};
+
+chatSocket.onclose = function(e) {
+    console.error('Chat socket closed unexpectedly');
+};
+
+// Send chat message
+document.getElementById('chat-send').onclick = () => {
+    const input = document.getElementById('chat-input');
+    if (input.value.trim() === '') return;
+    chatSocket.send(JSON.stringify({'message': input.value}));
+    input.value = '';
+};
+
+// Video upload handling
+const videoPlayer = document.getElementById('video-player');
+const youtubePlayer = document.getElementById('youtube-player');
+const videoUploadInput = document.getElementById('video-upload');
+const youtubeLinkInput = document.getElementById('youtube-link');
+const loadYoutubeBtn = document.getElementById('load-youtube');
+
+videoUploadInput.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const validTypes = ['video/mp4', 'video/webm'];
+    if (!validTypes.includes(file.type)) {
+        alert('Invalid file type. Use mp4 or webm.');
+        return;
+    }
+    const url = URL.createObjectURL(file);
+    youtubePlayer.style.display = 'none';
+    videoPlayer.style.display = 'block';
+    videoPlayer.src = url;
+    // Broadcast play/pause/seek handled later via WebSocket (sync logic)
+});
+
+loadYoutubeBtn.onclick = () => {
+    const url = youtubeLinkInput.value.trim();
+    if (!url) return alert('Please enter a YouTube URL');
+    const videoId = parseYouTubeID(url);
+    if (!videoId) return alert('Invalid YouTube URL');
+    youtubePlayer.src = `https://www.youtube.com/embed/${videoId}?enablejsapi=1&version=3&playerapiid=ytplayer`;
+    youtubePlayer.style.display = 'block';
+    videoPlayer.style.display = 'none';
+};
+
+// Extract YouTube ID helper
+function parseYouTubeID(url) {
+    const regex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/ ]{11})/;
+    const match = url.match(regex);
+    return (match && match[1]) || null;
+}
+</script>
+
+<script src="{% static 'core/js/webrtc.js' %}"></script>
+
+{% endblock %}

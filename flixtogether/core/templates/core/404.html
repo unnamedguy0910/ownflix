@@ -1,0 +1,15 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block title %}Room Not Found{% endblock %}
+
+{% block content %}
+<div class="flex flex-col items-center justify-center h-screen bg-gray-900 text-white">
+    <h1 class="text-6xl font-bold mb-6">404</h1>
+    <p class="text-2xl mb-4">Room Not Found</p>
+    <p class="mb-8">The room you are trying to access doesn't exist or has been deleted.</p>
+    <a href="{% url 'core:home' %}" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-2xl shadow-lg">
+        🔙 Go to Homepage
+    </a>
+</div>
+{% endblock %}

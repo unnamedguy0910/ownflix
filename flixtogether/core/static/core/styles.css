@@ -1,0 +1,106 @@
+/* Basic reset */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+body[data-theme="light"] {
+    background-color: #f0f0f0;
+    color: #222;
+}
+
+body[data-theme="dark"] {
+    background-color: #121212;
+    color: #eee;
+}
+
+header nav {
+    background-color: #333;
+    padding: 10px 20px;
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+header nav a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+header nav a:hover {
+    text-decoration: underline;
+}
+
+button {
+    cursor: pointer;
+}
+
+main {
+    max-width: 900px;
+    margin: 20px auto;
+    padding: 10px;
+    background-color: inherit;
+}
+
+input[type=text], input[type=password], input[type=email], input[type=file] {
+    padding: 8px;
+    width: 100%;
+    margin: 10px 0;
+}
+
+form button {
+    background-color: #007BFF;
+    border: none;
+    padding: 10px 15px;
+    color: white;
+    font-weight: bold;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+form button:hover {
+    background-color: #0056b3;
+}
+
+#video-container {
+    margin-bottom: 20px;
+}
+
+#chat-container {
+    background-color: #222;
+    color: white;
+    border-radius: 6px;
+    padding: 10px;
+}
+
+body[data-theme="light"] #chat-container {
+    background-color: #fff;
+    color: #000;
+    border: 1px solid #ccc;
+}
+
+/* Chat messages scroll area */
+#chat-messages div {
+    margin-bottom: 5px;
+}
+
+/* Emoji reaction style */
+.reaction {
+    position: absolute;
+    font-size: 2rem;
+    animation: floatUp 3s forwards;
+}
+
+@keyframes floatUp {
+    0% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-100px);
+    }
+}

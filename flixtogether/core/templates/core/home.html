@@ -1,0 +1,52 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}FlixTogether – Watch Together{% endblock %}
+
+{% block content %}
+<div class="container mx-auto p-6 text-center">
+    <h1 class="text-4xl font-bold mb-6 text-white">🎬 Welcome to FlixTogether</h1>
+    
+    <p class="text-lg text-gray-300 mb-8">
+        {% if user.is_authenticated %}
+            Ready to watch something together? Create a room or join an existing one!
+        {% else %}
+            <a href="{% url 'core:login' %}" class="text-blue-400 underline">Login</a> |
+            <a href="{% url 'core:register' %}" class="text-blue-400 underline">Register</a>
+        {% endif %}
+    </p>
+
+    {% if user.is_authenticated %}
+    <div class="flex flex-col items-center space-y-6">
+
+        <a href="{% url 'core:create_room' %}" class="bg-green-500 hover:bg-green-600 text-white py-2 px-6 rounded-2xl shadow-lg">
+    ➕ Create a Room
+</a>
+
+
+        <form onsubmit="return joinRoom(event)" class="flex items-center space-x-4">
+            <input id="join_slug" type="text" name="slug" placeholder="Enter Room Slug"
+                class="rounded-xl p-2 border border-gray-600 text-black" required>
+            <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-xl">
+                🔗 Join Room
+            </button>
+        </form>
+
+        <a href="{% url 'core:logout' %}" class="text-red-400 underline mt-4">Logout</a>
+    </div>
+
+    <script>
+    function joinRoom(e) {
+        e.preventDefault();
+        const slug = document.getElementById('join_slug').value.trim();
+        if (!slug) {
+            alert('Please enter a room slug.');
+            return false;
+        }
+        window.location.href = `/room/${slug}/`;
+        return false;
+    }
+    </script>
+    {% endif %}
+</div>
+{% endblock %}
